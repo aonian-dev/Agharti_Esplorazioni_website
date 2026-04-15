@@ -169,9 +169,15 @@
   );
 
   function openModal() {
-    document.getElementById('modal').classList.add('active');
-  }
+  const modal = document.getElementById('modal');
+  console.log(modal);
 
+  if (modal) {
+    modal.classList.add('active');
+  } else {
+    alert("modal non trovato");
+  }
+}
   async function loadPosts() {
     const { data, error } = await supabaseClient
       .from("posts")
