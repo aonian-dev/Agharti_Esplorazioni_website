@@ -1,15 +1,133 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aspromonte Escursioni</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav {
+      background: #2d5a3d;
+      color: white;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .hero {
+      height: 60vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200') center/cover;
+      color: white;
+      font-size: 2rem;
+    }
+
+    section {
+      padding: 40px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+    }
+
+    .card {
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 300px;
+    }
+
+    input, textarea {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 8px;
+    }
+
+    button {
+      padding: 10px;
+      background: #2d5a3d;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<nav>
+  <div>AspromonteGuide</div>
+  <button onclick="openModal()">Admin</button>
+</nav>
+
+<div class="hero">
+  Scopri l'Aspromonte
+</div>
+
+<section>
+  <h2>Blog</h2>
+  <div id="posts" class="grid"></div>
+</section>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h3>Nuovo Post</h3>
+    <input id="title" placeholder="Titolo">
+    <textarea id="content" placeholder="Testo"></textarea>
+    <input id="image" placeholder="URL immagine">
+
+    <button onclick="addPost()">Pubblica</button>
+  </div>
+</div>
+
+<!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
-const supabaseClient = supabase.createClient(
-  "https://jhldmqdfdmuttyjsfkrj.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpobGRtcWRmZG11dHR5anNma3JqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNjkwNDEsImV4cCI6MjA5MTc0NTA0MX0.ElIti6eL75OQaJzshXusQemATbT8osysWREKGrv-Rs0"
-);
+const supabaseUrl = "https://jhldmqdfdmuttyjsfkrj.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpobGRtcWRmZG11dHR5anNma3JrjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNjkwNDEsImV4cCI6MjA5MTc0NTA0MX0.ElIti6eL75OQaJzshXusQemATbT8osysWREKGrv-Rs0";
 
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+/* MODAL */
 function openModal() {
   document.getElementById('modal').classList.add('active');
 }
 
+/* CREATE POST */
 window.addPost = async function () {
   const title = document.getElementById('title').value;
   const content = document.getElementById('content').value;
@@ -31,26 +149,38 @@ window.addPost = async function () {
   loadPosts();
 };
 
+/* LOAD POSTS */
 async function loadPosts() {
+  const container = document.getElementById('posts');
+
+  if (!container) {
+    console.error("posts container non trovato");
+    return;
+  }
+
   const { data, error } = await supabaseClient
     .from("posts")
     .select("*")
-    .order("created_at", { ascending: false });
+    .order("id", { ascending: false });
 
-  const container = document.getElementById('posts');
   container.innerHTML = "";
 
   data.forEach(post => {
     const el = document.createElement('div');
-    el.className = 'card';
+    el.className = "card";
+
     el.innerHTML = `
-      ${post.image_url ? `<img src="${post.image_url}" style="width:100%; border-radius:10px;">` : ""}
+      ${post.image_url ? `<img src="${post.image_url}" style="width:100%;border-radius:10px;">` : ""}
       <h3>${post.title}</h3>
       <p>${post.content}</p>
     `;
+
     container.appendChild(el);
   });
 }
 
 loadPosts();
 </script>
+
+</body>
+</html>
