@@ -6,32 +6,56 @@
   <title>Aspromonte Escursioni</title>
 
   <style>
-    body {
-      font-family: Arial;
+    :root {
+      --forest: #2d5a3d;
+      --sand: #f5f1eb;
+      --text: #333;
+    }
+
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      color: var(--text);
     }
 
     nav {
-      background: #2d5a3d;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: var(--forest);
       color: white;
       padding: 15px;
       display: flex;
       justify-content: space-between;
+      z-index: 10;
+    }
+
+    nav button {
+      background: white;
+      color: var(--forest);
+      border: none;
+      padding: 8px 12px;
+      cursor: pointer;
     }
 
     .hero {
-      height: 60vh;
+      height: 70vh;
+      background: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1600') center/cover;
       display: flex;
       justify-content: center;
       align-items: center;
-      background: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200') center/cover;
       color: white;
       font-size: 2rem;
+      text-align: center;
     }
 
     section {
-      padding: 40px;
+      padding: 60px 10%;
     }
 
     .grid {
@@ -41,21 +65,26 @@
     }
 
     .card {
+      background: white;
       padding: 15px;
-      border: 1px solid #ddd;
       border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      cursor: pointer;
     }
 
+    .blog {
+      background: var(--sand);
+    }
+
+    /* MODAL */
     .modal {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      inset: 0;
       background: rgba(0,0,0,0.6);
       justify-content: center;
       align-items: center;
+      z-index: 100;
     }
 
     .modal.active {
@@ -66,7 +95,7 @@
       background: white;
       padding: 20px;
       border-radius: 10px;
-      width: 300px;
+      width: 320px;
     }
 
     input, textarea {
@@ -77,10 +106,16 @@
 
     button {
       padding: 10px;
-      background: #2d5a3d;
+      background: var(--forest);
       color: white;
       border: none;
       cursor: pointer;
+    }
+
+    img {
+      max-width: 100%;
+      border-radius: 8px;
+      margin-bottom: 10px;
     }
   </style>
 </head>
@@ -89,27 +124,36 @@
 
 <nav>
   <div>AspromonteGuide</div>
-  <button onclick="openModal()">Admin</button>
+  <button onclick="openAdmin()">Admin</button>
 </nav>
 
 <div class="hero">
   Scopri l'Aspromonte
 </div>
 
-<section>
-  <h2>Blog</h2>
+<section class="blog">
+  <h2>Blog Escursioni</h2>
   <div id="posts" class="grid"></div>
 </section>
 
-<!-- MODAL -->
-<div class="modal" id="modal">
+<!-- ADMIN MODAL -->
+<div class="modal" id="adminModal">
   <div class="modal-content">
     <h3>Nuovo Post</h3>
     <input id="title" placeholder="Titolo">
-    <textarea id="content" placeholder="Testo"></textarea>
-    <input id="image" placeholder="URL immagine">
-
+    <textarea id="content" placeholder="Contenuto"></textarea>
+    <input id="image" placeholder="URL immagine (opzionale)">
     <button onclick="addPost()">Pubblica</button>
+  </div>
+</div>
+
+<!-- POST MODAL -->
+<div class="modal" id="postModal">
+  <div class="modal-content">
+    <h2 id="postTitle"></h2>
+    <img id="postImage">
+    <p id="postContent"></p>
+    <button onclick="closePost()">Chiudi</button>
   </div>
 </div>
 
@@ -118,45 +162,44 @@
 
 <script>
 const supabaseUrl = "https://jhldmqdfdmuttyjsfkrj.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpobGRtcWRmZG11dHR5anNma3JrjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNjkwNDEsImV4cCI6MjA5MTc0NTA0MX0.ElIti6eL75OQaJzshXusQemATbT8osysWREKGrv-Rs0";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpobGRtcWRmZG11dHR5anNma3JqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNjkwNDEsImV4cCI6MjA5MTc0NTA0MX0.ElIti6eL75OQaJzshXusQemATbT8osysWREKGrv-Rs0";
 
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-/* MODAL */
-function openModal() {
-  document.getElementById('modal').classList.add('active');
+/* OPEN ADMIN */
+function openAdmin() {
+  document.getElementById("adminModal").classList.add("active");
 }
 
-/* CREATE POST */
+/* CLOSE POST */
+function closePost() {
+  document.getElementById("postModal").classList.remove("active");
+}
+
+/* ADD POST */
 window.addPost = async function () {
-  const title = document.getElementById('title').value;
-  const content = document.getElementById('content').value;
-  const image = document.getElementById('image').value;
+  const title = document.getElementById("title").value;
+  const content = document.getElementById("content").value;
+  const image = document.getElementById("image").value;
 
   const { data, error } = await supabaseClient
-    .from('posts')
+    .from("posts")
     .insert([{
       title,
       content,
       image_url: image
     }]);
 
-  console.log("DATA:", data);
-  console.log("ERROR:", error);
+  console.log(data, error);
 
-  document.getElementById('modal').classList.remove('active');
+  document.getElementById("adminModal").classList.remove("active");
 
   loadPosts();
 };
 
 /* LOAD POSTS */
 async function loadPosts() {
-  const container = document.getElementById('posts');
-
-  if (!container) {
-    console.error("posts container non trovato");
-    return;
-  }
+  const container = document.getElementById("posts");
 
   const { data, error } = await supabaseClient
     .from("posts")
@@ -166,19 +209,39 @@ async function loadPosts() {
   container.innerHTML = "";
 
   data.forEach(post => {
-    const el = document.createElement('div');
+    const el = document.createElement("div");
     el.className = "card";
 
     el.innerHTML = `
-      ${post.image_url ? `<img src="${post.image_url}" style="width:100%;border-radius:10px;">` : ""}
+      ${post.image_url ? `<img src="${post.image_url}">` : ""}
       <h3>${post.title}</h3>
-      <p>${post.content}</p>
+      <p>${post.content.substring(0, 80)}...</p>
     `;
+
+    el.onclick = () => openPost(post);
 
     container.appendChild(el);
   });
 }
 
+/* OPEN SINGLE POST */
+function openPost(post) {
+  document.getElementById("postTitle").innerText = post.title;
+  document.getElementById("postContent").innerText = post.content;
+
+  const img = document.getElementById("postImage");
+
+  if (post.image_url) {
+    img.src = post.image_url;
+    img.style.display = "block";
+  } else {
+    img.style.display = "none";
+  }
+
+  document.getElementById("postModal").classList.add("active");
+}
+
+/* INIT */
 loadPosts();
 </script>
 
