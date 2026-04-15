@@ -202,15 +202,19 @@
     });
   }
 
-  async function addPost() {
-    const title = document.getElementById('title').value;
-    const content = document.getElementById('content').value;
-    const image = document.getElementById('image').value;
+ async function addPost() {
+  const title = document.getElementById('title').value;
+  const content = document.getElementById('content').value;
+  const image = document.getElementById('image').value;
 
-    await supabaseClient.from("posts").insert([
-      { title: title, content: content, image_url: image }
-    ]);
+  const { data, error } = await supabaseClient
+    .from('posts')
+    .insert([{ title, content, image }]);
 
+  console.log(data, error);
+   console.log("sto provando a salvare...");
+   console.log(error);
+}
 
 
 
