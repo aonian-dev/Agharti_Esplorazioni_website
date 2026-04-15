@@ -202,19 +202,20 @@
     });
   }
 
- async function addPost() {
+window.addPost = async function () {
   const title = document.getElementById('title').value;
   const content = document.getElementById('content').value;
   const image = document.getElementById('image').value;
+
+  console.log("sto provando a salvare...");
 
   const { data, error } = await supabaseClient
     .from('posts')
     .insert([{ title, content, image }]);
 
-  console.log(data, error);
-   console.log("sto provando a salvare...");
-   console.log(error);
-}
+  console.log("DATA:", data);
+  console.log("ERROR:", error);
+};
 
 
 
