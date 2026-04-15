@@ -25,7 +25,6 @@
       color: var(--text);
     }
 
-    /* NAVBAR */
     nav {
       position: fixed;
       width: 100%;
@@ -44,7 +43,6 @@
       margin: 0 10px;
     }
 
-    /* HERO */
     .hero {
       height: 100vh;
       background: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1920') center/cover;
@@ -59,7 +57,6 @@
       font-size: 3rem;
     }
 
-    /* SECTIONS */
     section {
       padding: 60px 10%;
     }
@@ -69,7 +66,6 @@
       color: var(--forest);
     }
 
-    /* CARDS */
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -83,12 +79,10 @@
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
 
-    /* BLOG */
     .blog {
       background: var(--sand);
     }
 
-    /* MODAL */
     .modal {
       display: none;
       position: fixed;
@@ -123,13 +117,11 @@
       border: none;
       cursor: pointer;
     }
-
   </style>
 </head>
 
 <body>
 
-<!-- NAV -->
 <nav>
   <div>AspromonteGuide</div>
   <div>
@@ -140,7 +132,6 @@
   <button onclick="openModal()">Admin</button>
 </nav>
 
-<!-- HERO -->
 <section class="hero" id="home">
   <div>
     <h1>Scopri l'Aspromonte</h1>
@@ -148,54 +139,77 @@
   </div>
 </section>
 
-<!-- ABOUT -->
 <section id="about">
   <h2>La Guida</h2>
   <p>Guida esperta con anni di esperienza nell'Aspromonte.</p>
 </section>
 
-<!-- BLOG -->
 <section class="blog" id="blog">
   <h2>Blog Escursioni</h2>
   <div id="posts" class="grid"></div>
 </section>
 
-<!-- ADMIN MODAL -->
 <div class="modal" id="modal">
   <div class="modal-content">
     <h3>Nuovo Post</h3>
     <input id="title" placeholder="Titolo">
     <textarea id="content" placeholder="Testo"></textarea>
+    <input id="image" placeholder="URL immagine (opzionale)">
     <button onclick="addPost()">Pubblica</button>
   </div>
 </div>
 
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
 <script>
-  let posts = [];
+  const supabaseClient = supabase.createClient(
+    https://jhldmqdfdmuttyjsfkrj.supabase.co,
+    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpobGRtcWRmZG11dHR5anNma3JqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNjkwNDEsImV4cCI6MjA5MTc0NTA0MX0.ElIti6eL75OQaJzshXusQemATbT8osysWREKGrv-Rs0
+  );
 
   function openModal() {
     document.getElementById('modal').classList.add('active');
   }
 
-  function addPost() {
-    const title = document.getElementById('title').value;
-    const content = document.getElementById('content').value;
+  async function loadPosts() {
+    const { data, error } = await supabaseClient
+      .from("posts")
+      .select("*")
+      .order("created_at", { ascending: false });
 
-    posts.unshift({ title, content });
-    renderPosts();
-  }
-
-  function renderPosts() {
     const container = document.getElementById('posts');
-    container.innerHTML = '';
+    container.innerHTML = "";
 
-    posts.forEach(p => {
+    data.forEach(post => {
       const el = document.createElement('div');
       el.className = 'card';
-      el.innerHTML = `<h3>${p.title}</h3><p>${p.content}</p>`;
+      el.innerHTML = `
+        ${post.image_url ? `<img src="${post.image_url}" style="width:100%; border-radius:10px;">` : ""}
+        <h3>${post.title}</h3>
+        <p>${post.content}</p>
+      `;
       container.appendChild(el);
     });
   }
+
+  async function addPost() {
+    const title = document.getElementById('title').value;
+    const content = document.getElementById('content').value;
+    const image = document.getElementById('image').value;
+
+    await supabaseClient.from("posts").insert([
+      { title: title, content: content, image_url: image }
+    ]);
+
+    alert("Post pubblicato!");
+
+    document.getElementById('modal').classList.remove('active');
+
+    loadPosts();
+  }
+
+  loadPosts();
 </script>
 
 </body>
