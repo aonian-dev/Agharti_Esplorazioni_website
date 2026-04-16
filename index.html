@@ -8,12 +8,20 @@
 <style>
 
 /* =========================
-   STILE GENERALE
+   PALETTE NATURALE
 ========================= */
+:root {
+  --green:#2d5a3d;
+  --green-light:#3f7a56;
+  --sand:#f4f1ea;
+  --dark:#1e2a23;
+}
+
+/* RESET */
 body {
   margin:0;
-  font-family: 'Segoe UI', sans-serif;
-  background:#f9f9f9;
+  font-family:'Segoe UI', sans-serif;
+  background:var(--sand);
   color:#333;
 }
 
@@ -24,36 +32,40 @@ nav {
   position:fixed;
   top:0;
   width:100%;
-  background:#2d5a3d;
-  color:white;
+  background:rgba(30,42,35,0.9);
+  backdrop-filter:blur(6px);
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:15px 40px; /* più spazio laterale */
-  box-shadow:0 3px 10px rgba(0,0,0,0.2);
+  padding:15px 60px;
   z-index:100;
 }
 
-/* link */
-nav a {
-  margin:0 12px;
-  cursor:pointer;
+/* logo */
+nav .logo {
+  font-weight:bold;
   color:white;
+  font-size:1.2rem;
+}
+
+/* link */
+nav .links a {
+  color:white;
+  margin:0 12px;
   text-decoration:none;
-  transition:0.2s;
+  transition:0.3s;
 }
 
-nav a:hover {
-  opacity:0.7;
+nav .links a:hover {
+  color:#cfe8d5;
 }
 
-/* pulsante admin migliorato */
-nav button {
-  margin-right:20px; /* 👈 spostato più a sinistra */
+/* ADMIN (FINALMENTE NON ATTACCATO A DESTRA) */
+nav .admin-btn {
+  margin-left:40px; /* 👈 SPINTA A SINISTRA */
+  background:#cfe8d5;
+  color:#1e2a23;
   padding:8px 14px;
-  border:none;
-  background:white;
-  color:#2d5a3d;
   border-radius:6px;
   cursor:pointer;
 }
@@ -62,21 +74,37 @@ nav button {
    HERO
 ========================= */
 .hero {
-  height:80vh;
-  background:url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1600') center/cover;
+  height:90vh;
+  background:
+    linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)),
+    url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1600') center/cover;
   display:flex;
-  align-items:center;
+  flex-direction:column;
   justify-content:center;
+  align-items:center;
   color:white;
-  font-size:2.5rem;
   text-align:center;
+}
+
+.hero h1 {
+  font-size:3rem;
+}
+
+.hero p {
+  max-width:600px;
+  margin-top:10px;
+  font-size:1.1rem;
 }
 
 /* =========================
    SEZIONI
 ========================= */
 section {
-  padding:100px 10%;
+  padding:100px 12%;
+}
+
+.alt {
+  background:white;
 }
 
 /* =========================
@@ -85,25 +113,29 @@ section {
 .grid {
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:20px;
+  gap:25px;
 }
 
 .card {
   background:white;
-  padding:15px;
   border-radius:12px;
-  box-shadow:0 5px 20px rgba(0,0,0,0.08);
+  overflow:hidden;
+  box-shadow:0 8px 25px rgba(0,0,0,0.1);
   transition:0.3s;
-  cursor:pointer;
 }
 
 .card:hover {
-  transform:translateY(-5px);
+  transform:translateY(-6px);
 }
 
 .card img {
   width:100%;
-  border-radius:10px;
+  height:180px;
+  object-fit:cover;
+}
+
+.card-content {
+  padding:15px;
 }
 
 /* =========================
@@ -125,21 +157,19 @@ section {
 .modal-content {
   background:white;
   padding:20px;
-  border-radius:12px;
+  border-radius:10px;
   width:320px;
   position:relative;
 }
 
-/* bottone chiudi */
-.close-btn {
+.close {
   position:absolute;
-  top:10px;
   right:10px;
+  top:10px;
   cursor:pointer;
-  font-weight:bold;
 }
 
-/* input */
+/* form */
 input,textarea,select {
   width:100%;
   margin-bottom:10px;
@@ -148,7 +178,7 @@ input,textarea,select {
 
 button {
   padding:10px;
-  background:#2d5a3d;
+  background:var(--green);
   color:white;
   border:none;
   cursor:pointer;
@@ -161,9 +191,9 @@ button {
 
 <!-- NAVBAR -->
 <nav>
-  <div>AspromonteGuide</div>
+  <div class="logo">Aspromonte Guide</div>
 
-  <div>
+  <div class="links">
     <a onclick="scrollToId('home')">Home</a>
     <a onclick="scrollToId('guide')">Guida</a>
     <a onclick="scrollToId('escursioni')">Escursioni</a>
@@ -171,18 +201,26 @@ button {
     <a onclick="scrollToId('contatti')">Contatti</a>
   </div>
 
-  <button onclick="openAdmin()">Admin</button>
+  <div class="admin-btn" onclick="openAdmin()">Admin</div>
 </nav>
 
 <!-- HERO -->
 <div class="hero" id="home">
-  Scopri l’Aspromonte
+  <h1>Esplora l’Aspromonte</h1>
+  <p>
+    Escursioni guidate tra natura selvaggia, panorami mozzafiato e tradizioni autentiche.
+    Vivi un’esperienza unica nel cuore della Calabria.
+  </p>
 </div>
 
 <!-- GUIDA -->
-<section id="guide">
+<section id="guide" class="alt">
   <h2>La Guida</h2>
-  <p>Guida escursionistica esperta nell’Aspromonte.</p>
+  <p>
+    Mi chiamo Marco, guida escursionistica certificata con oltre 10 anni di esperienza.
+    Conosco ogni sentiero dell’Aspromonte e accompagno gruppi e singoli alla scoperta
+    di luoghi nascosti, cascate, boschi e viste spettacolari sul mare.
+  </p>
 </section>
 
 <!-- ESCURSIONI -->
@@ -192,7 +230,7 @@ button {
 </section>
 
 <!-- BLOG -->
-<section id="blog">
+<section id="blog" class="alt">
   <h2>Blog</h2>
   <div id="blogContainer" class="grid"></div>
 </section>
@@ -200,15 +238,18 @@ button {
 <!-- CONTATTI -->
 <section id="contatti">
   <h2>Contatti</h2>
-  <p>Email: info@aspromonte.it</p>
+  <p>Email: info@aspromonteguide.it</p>
+  <p>Telefono: +39 333 123 4567</p>
+  <p>
+    Scrivimi per organizzare la tua escursione personalizzata o per ricevere
+    informazioni sui prossimi trekking.
+  </p>
 </section>
 
 <!-- MODAL ADMIN -->
 <div class="modal" id="adminModal" onclick="outsideClick(event,'adminModal')">
   <div class="modal-content">
-
-    <!-- chiudi -->
-    <div class="close-btn" onclick="closeAdmin()">✕</div>
+    <div class="close" onclick="closeAdmin()">✕</div>
 
     <h3>Nuovo Post</h3>
 
@@ -228,13 +269,11 @@ button {
 <!-- MODAL POST -->
 <div class="modal" id="postModal" onclick="outsideClick(event,'postModal')">
   <div class="modal-content">
-
-    <div class="close-btn" onclick="closePost()">✕</div>
+    <div class="close" onclick="closePost()">✕</div>
 
     <h2 id="postTitle"></h2>
     <img id="postImage">
     <p id="postContent"></p>
-
   </div>
 </div>
 
@@ -248,93 +287,64 @@ const supabaseClient = supabase.createClient(
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpobGRtcWRmZG11dHR5anNma3JqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNjkwNDEsImV4cCI6MjA5MTc0NTA0MX0.ElIti6eL75OQaJzshXusQemATbT8osysWREKGrv-Rs0"
 );
 
-/* SCROLL */
+/* NAV */
 function scrollToId(id){
   document.getElementById(id).scrollIntoView({behavior:"smooth"});
 }
 
-/* OPEN/CLOSE ADMIN */
-function openAdmin(){
-  document.getElementById("adminModal").classList.add("active");
-}
-function closeAdmin(){
-  document.getElementById("adminModal").classList.remove("active");
-}
+/* MODALI */
+function openAdmin(){document.getElementById("adminModal").classList.add("active");}
+function closeAdmin(){document.getElementById("adminModal").classList.remove("active");}
+function closePost(){document.getElementById("postModal").classList.remove("active");}
 
-/* CLOSE POST */
-function closePost(){
-  document.getElementById("postModal").classList.remove("active");
-}
-
-/* CLICK FUORI = CHIUDE */
 function outsideClick(e,id){
-  if(e.target.id === id){
-    document.getElementById(id).classList.remove("active");
-  }
+  if(e.target.id===id) document.getElementById(id).classList.remove("active");
 }
-
-/* ESC = CHIUDE */
-document.addEventListener("keydown", e=>{
-  if(e.key === "Escape"){
-    closeAdmin();
-    closePost();
-  }
-});
 
 /* ADD POST */
 window.addPost = async function(){
 
-  const title = document.getElementById("title").value;
-  const content = document.getElementById("content").value;
-  const image = document.getElementById("image").value;
-  const type = document.getElementById("type").value;
+  const title=document.getElementById("title").value;
+  const content=document.getElementById("content").value;
+  const image=document.getElementById("image").value;
+  const type=document.getElementById("type").value;
 
   await supabaseClient.from("posts").insert([
-    { title, content, image_url:image, type }
+    {title,content,image_url:image,type}
   ]);
 
   closeAdmin();
   loadPosts();
 };
 
-/* LOAD POSTS */
+/* LOAD */
 async function loadPosts(){
 
-  const { data } = await supabaseClient
-    .from("posts")
-    .select("*")
-    .order("id",{ascending:false});
+  const {data}=await supabaseClient.from("posts").select("*").order("id",{ascending:false});
 
-  const esc = document.getElementById("escursioniContainer");
-  const blog = document.getElementById("blogContainer");
+  const esc=document.getElementById("escursioniContainer");
+  const blog=document.getElementById("blogContainer");
 
   esc.innerHTML="";
   blog.innerHTML="";
 
   data.forEach(post=>{
 
-    const el = document.createElement("div");
+    const el=document.createElement("div");
     el.className="card";
 
-    let html="";
-
-    if(post.image_url){
-      html+="<img src='"+post.image_url+"'>";
-    }
-
-    html+="<h3>"+post.title+"</h3>";
-    html+="<p>"+post.content.substring(0,80)+"...</p>";
-
-    el.innerHTML=html;
+    el.innerHTML=`
+      ${post.image_url ? `<img src="${post.image_url}">` : ""}
+      <div class="card-content">
+        <h3>${post.title}</h3>
+        <p>${post.content.substring(0,80)}...</p>
+      </div>
+    `;
 
     el.onclick=()=>openPost(post);
 
-    if(post.type==="blog"){
-      blog.appendChild(el);
-    } else {
-      esc.appendChild(el);
-    }
-
+    if(post.type==="blog") blog.appendChild(el);
+    else esc.appendChild(el);
   });
 }
 
@@ -356,7 +366,6 @@ function openPost(post){
   document.getElementById("postModal").classList.add("active");
 }
 
-/* INIT */
 loadPosts();
 
 </script>
