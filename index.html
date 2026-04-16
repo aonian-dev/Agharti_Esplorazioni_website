@@ -1,153 +1,261 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Aspromonte Escursioni</title>
 
   <style>
+    /* =========================
+       VARIABILI COLORI PRINCIPALI
+    ========================== */
     :root {
-      --forest: #2d5a3d;
+      --green: #2d5a3d;
       --sand: #f5f1eb;
       --text: #333;
     }
 
+    /* RESET BASE */
     * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
     }
 
     body {
-      font-family: Arial, sans-serif;
+      font-family: Arial;
       color: var(--text);
+      scroll-behavior: smooth;
     }
 
+    /* =========================
+       NAVBAR FISSA
+    ========================== */
     nav {
       position: fixed;
       top: 0;
       width: 100%;
-      background: var(--forest);
+      background: var(--green);
       color: white;
-      padding: 15px;
-      display: flex;
+      display:flex;
       justify-content: space-between;
+      padding: 15px;
       z-index: 10;
     }
 
+    nav a {
+      color:white;
+      margin: 0 10px;
+      text-decoration:none;
+      cursor:pointer;
+    }
+
     nav button {
-      background: white;
-      color: var(--forest);
-      border: none;
-      padding: 8px 12px;
-      cursor: pointer;
+      background:white;
+      color:var(--green);
+      border:none;
+      padding:6px 10px;
+      cursor:pointer;
     }
 
+    /* =========================
+       HERO (PRIMA SEZIONE VISIVA)
+    ========================== */
     .hero {
-      height: 70vh;
+      height: 80vh;
       background: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1600') center/cover;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      font-size: 2rem;
-      text-align: center;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      color:white;
+      font-size:2.5rem;
+      text-align:center;
     }
 
+    /* SEZIONI GENERALI */
     section {
-      padding: 60px 10%;
+      padding: 80px 10%;
     }
 
+    h2 {
+      margin-bottom: 20px;
+      color: var(--green);
+    }
+
+    /* =========================
+       CARD BLOG / ESCURSIONI
+    ========================== */
     .grid {
-      display: grid;
+      display:grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 15px;
     }
 
     .card {
-      background: white;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      cursor: pointer;
+      background:white;
+      padding:15px;
+      border-radius:10px;
+      box-shadow:0 5px 15px rgba(0,0,0,0.1);
+      cursor:pointer;
     }
 
     .blog {
       background: var(--sand);
     }
 
-    /* MODAL */
+    /* =========================
+       MODALI (POPUP)
+    ========================== */
     .modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      justify-content: center;
-      align-items: center;
-      z-index: 100;
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.6);
+      justify-content:center;
+      align-items:center;
+      z-index:100;
     }
 
     .modal.active {
-      display: flex;
+      display:flex;
     }
 
     .modal-content {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      width: 320px;
+      background:white;
+      padding:20px;
+      border-radius:10px;
+      width:320px;
     }
 
+    /* INPUT FORM */
     input, textarea {
-      width: 100%;
-      margin-bottom: 10px;
-      padding: 8px;
+      width:100%;
+      margin-bottom:10px;
+      padding:8px;
     }
 
     button {
-      padding: 10px;
-      background: var(--forest);
-      color: white;
-      border: none;
-      cursor: pointer;
+      padding:10px;
+      background:var(--green);
+      color:white;
+      border:none;
+      cursor:pointer;
     }
 
     img {
-      max-width: 100%;
-      border-radius: 8px;
-      margin-bottom: 10px;
+      max-width:100%;
+      border-radius:8px;
+    }
+
+    /* =========================
+       GUIDA (PROFILO PERSONA)
+    ========================== */
+    .guide-card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      display:flex;
+      gap:20px;
+      box-shadow:0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .guide-card img {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      object-fit: cover;
     }
   </style>
 </head>
 
 <body>
 
+<!-- =========================
+     NAVBAR
+========================== -->
 <nav>
   <div>AspromonteGuide</div>
+
+  <!-- link scroll tra sezioni -->
+  <div>
+    <a onclick="scrollToId('home')">Home</a>
+    <a onclick="scrollToId('guide')">La Guida</a>
+    <a onclick="scrollToId('escursioni')">Escursioni</a>
+    <a onclick="scrollToId('contatti')">Contatti</a>
+  </div>
+
+  <!-- apre pannello admin -->
   <button onclick="openAdmin()">Admin</button>
 </nav>
 
-<div class="hero">
-  Scopri l'Aspromonte
+<!-- =========================
+     HOME / HERO
+========================== -->
+<div class="hero" id="home">
+  Escursioni autentiche nell’Aspromonte
 </div>
 
-<section class="blog">
-  <h2>Blog Escursioni</h2>
+<!-- =========================
+     SEZIONE GUIDA (PERSONA)
+========================== -->
+<section id="guide">
+  <h2>La Guida</h2>
+
+  <div class="guide-card">
+    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400">
+
+    <div>
+      <h3>Guida Escursionistica</h3>
+      <p>
+        Guida certificata specializzata nei sentieri dell’Aspromonte.
+        Esperienza in trekking, natura e turismo lento.
+      </p>
+      <p>
+        Accompagno gruppi e singoli in escursioni sicure e personalizzate.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- =========================
+     ESCURSIONI (DINAMICHE DA SUPABASE)
+========================== -->
+<section id="escursioni" class="blog">
+  <h2>Escursioni</h2>
+
+  <!-- qui vengono caricati i post -->
   <div id="posts" class="grid"></div>
 </section>
 
-<!-- ADMIN MODAL -->
+<!-- =========================
+     CONTATTI (STATICO)
+========================== -->
+<section id="contatti">
+  <h2>Contatti</h2>
+  <p>Email: info@aspromonteguide.it</p>
+  <p>Telefono: +39 333 123 4567</p>
+</section>
+
+<!-- =========================
+     MODAL ADMIN (CREA POST)
+========================== -->
 <div class="modal" id="adminModal">
   <div class="modal-content">
-    <h3>Nuovo Post</h3>
+    <h3>Nuova Escursione</h3>
+
+    <!-- input post -->
     <input id="title" placeholder="Titolo">
-    <textarea id="content" placeholder="Contenuto"></textarea>
-    <input id="image" placeholder="URL immagine (opzionale)">
+    <textarea id="content" placeholder="Descrizione"></textarea>
+    <input id="image" placeholder="URL immagine">
+
+    <!-- bottone crea post -->
     <button onclick="addPost()">Pubblica</button>
   </div>
 </div>
 
-<!-- POST MODAL -->
+<!-- =========================
+     MODAL DETTAGLIO POST
+========================== -->
 <div class="modal" id="postModal">
   <div class="modal-content">
     <h2 id="postTitle"></h2>
@@ -157,81 +265,103 @@
   </div>
 </div>
 
-<!-- SUPABASE -->
+<!-- =========================
+     SUPABASE SDK
+========================== -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 <script>
-const supabaseUrl = "https://jhldmqdfdmuttyjsfkrj.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpobGRtcWRmZG11dHR5anNma3JqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNjkwNDEsImV4cCI6MjA5MTc0NTA0MX0.ElIti6eL75OQaJzshXusQemATbT8osysWREKGrv-Rs0";
 
-const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+/* =========================
+   INIZIALIZZAZIONE SUPABASE
+========================== */
+const supabaseClient = supabase.createClient(
+  "https://jhldmqdfdmuttyjsfkrj.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpobGRtcWRmZG11dHR5anNma3JqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNjkwNDEsImV4cCI6MjA5MTc0NTA0MX0.ElIti6eL75OQaJzshXusQemATbT8osysWREKGrv-Rs0"
+);
 
-/* OPEN ADMIN */
-function openAdmin() {
+/* =========================
+   NAV SCROLL TRA SEZIONI
+========================== */
+function scrollToId(id){
+  document.getElementById(id).scrollIntoView({ behavior:"smooth" });
+}
+
+/* =========================
+   APERTURA MODAL ADMIN
+========================== */
+function openAdmin(){
   document.getElementById("adminModal").classList.add("active");
 }
 
-/* CLOSE POST */
-function closePost() {
+/* =========================
+   CHIUSURA MODAL POST
+========================== */
+function closePost(){
   document.getElementById("postModal").classList.remove("active");
 }
 
-/* ADD POST */
-window.addPost = async function () {
+/* =========================
+   CREA NUOVO POST (SUPABASE INSERT)
+========================== */
+window.addPost = async function(){
+
   const title = document.getElementById("title").value;
   const content = document.getElementById("content").value;
   const image = document.getElementById("image").value;
 
-  const { data, error } = await supabaseClient
+  await supabaseClient
     .from("posts")
-    .insert([{
-      title,
-      content,
-      image_url: image
-    }]);
-
-  console.log(data, error);
+    .insert([{ title, content, image_url: image }]);
 
   document.getElementById("adminModal").classList.remove("active");
 
   loadPosts();
 };
 
-/* LOAD POSTS */
-async function loadPosts() {
+/* =========================
+   CARICA POST DAL DATABASE
+========================== */
+async function loadPosts(){
+
   const container = document.getElementById("posts");
 
-  const { data, error } = await supabaseClient
+  const { data } = await supabaseClient
     .from("posts")
     .select("*")
-    .order("id", { ascending: false });
+    .order("id", { ascending:false });
 
   container.innerHTML = "";
 
   data.forEach(post => {
+
     const el = document.createElement("div");
     el.className = "card";
 
     el.innerHTML = `
       ${post.image_url ? `<img src="${post.image_url}">` : ""}
       <h3>${post.title}</h3>
-      <p>${post.content.substring(0, 80)}...</p>
+      <p>${post.content.substring(0,80)}...</p>
     `;
 
+    // click per aprire dettaglio post
     el.onclick = () => openPost(post);
 
     container.appendChild(el);
   });
 }
 
-/* OPEN SINGLE POST */
-function openPost(post) {
+/* =========================
+   APERTURA DETTAGLIO POST
+========================== */
+function openPost(post){
+
   document.getElementById("postTitle").innerText = post.title;
   document.getElementById("postContent").innerText = post.content;
 
   const img = document.getElementById("postImage");
 
-  if (post.image_url) {
+  if(post.image_url){
     img.src = post.image_url;
     img.style.display = "block";
   } else {
@@ -241,8 +371,11 @@ function openPost(post) {
   document.getElementById("postModal").classList.add("active");
 }
 
-/* INIT */
+/* =========================
+   INIT
+========================== */
 loadPosts();
+
 </script>
 
 </body>
