@@ -136,6 +136,19 @@ nav.scrolled {
   box-shadow: 0 6px 16px rgba(63,122,86,0.5) !important;
 }
 
+.btn-logout {
+  margin-left: 8px;
+  background: rgba(255,255,255,0.15);
+  color: white !important;
+  padding: 9px 14px !important;
+  border-radius: 10px !important;
+  font-weight: 500 !important;
+  font-size: 0.85rem !important;
+  border: 1px solid rgba(255,255,255,0.25) !important;
+  display: none;
+}
+.btn-logout:hover { background: rgba(255,255,255,0.25) !important; }
+
 /* HAMBURGER */
 .nav-hamburger {
   display: none;
@@ -791,7 +804,7 @@ section { padding: 100px 60px; }
 
 .modal-overlay.active { display: flex; }
 
-/* MODAL ADMIN */
+/* MODAL ADMIN / LOGIN */
 .modal-box {
   background: white;
   border-radius: var(--radius);
@@ -927,20 +940,45 @@ input:focus, textarea:focus, select:focus {
 .btn-submit:hover { background: var(--green-light); }
 .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
 
-/* ===== AGGIUNTO: LOGOUT BUTTON ===== */
-.btn-logout {
-  margin-left: 8px;
-  background: rgba(255,255,255,0.15);
-  color: white !important;
-  padding: 9px 14px !important;
-  border-radius: 10px !important;
-  font-weight: 500 !important;
-  font-size: 0.85rem !important;
-  border: 1px solid rgba(255,255,255,0.25) !important;
-  display: none;
+/* ---- DRAG & DROP ZONE ---- */
+.drop-zone {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-sm);
+  padding: 20px 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+  margin-bottom: 14px;
+  background: var(--gray-light);
 }
-.btn-logout:hover { background: rgba(255,255,255,0.25) !important; }
-/* =================================== */
+.drop-zone:hover, .drop-zone.dragover {
+  border-color: var(--green-mid);
+  background: rgba(63,122,86,0.07);
+}
+.drop-zone-icon { font-size: 1.6rem; margin-bottom: 6px; }
+.drop-zone-text { color: var(--gray); font-size: 0.82rem; line-height: 1.5; }
+.drop-zone-text small { color: #9ca3af; }
+.drop-zone-uploading { color: var(--green-mid); font-size: 0.82rem; margin-top: 6px; display: none; }
+
+/* ---- GUIDE PHOTO CHANGE (admin) ---- */
+.guide-img-change {
+  position: absolute;
+  inset: 0;
+  background: rgba(30,42,35,0.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+  border-radius: var(--radius);
+  transition: var(--transition);
+  z-index: 5;
+}
+.guide-img-change:hover { background: rgba(30,42,35,0.72); }
+.guide-img-change span { color: white; font-weight: 600; font-size: 0.9rem; }
+.guide-img-change small { color: rgba(255,255,255,0.7); font-size: 0.75rem; }
+.guide-img-change-icon { font-size: 2rem; }
 
 /* MODAL POST */
 .post-modal-box {
@@ -1033,11 +1071,14 @@ input:focus, textarea:focus, select:focus {
 
 .post-modal-divider { height: 1px; background: var(--border); margin-bottom: 20px; }
 
+/* FIX: testo del post leggibile, va a capo correttamente */
 .post-modal-text {
   color: #4b5563;
   line-height: 1.8;
   font-size: 1rem;
-  white-space: pre-wrap;
+  white-space: pre-line;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .post-modal-footer {
@@ -1121,7 +1162,6 @@ input:focus, textarea:focus, select:focus {
     <a onclick="scrollToId('blog')">Blog</a>
     <a onclick="scrollToId('contatti')">Contatti</a>
     <a class="nav-admin" onclick="openAdmin()">Admin</a>
-    <!-- AGGIUNTO: bottone logout, visibile solo dopo il login -->
     <a class="nav-admin btn-logout" id="btnLogout" onclick="doLogout()">Esci</a>
   </div>
 
@@ -1169,11 +1209,23 @@ input:focus, textarea:focus, select:focus {
   <div class="guide-grid">
     <div class="guide-img-wrap">
       <div class="guide-img">
-        <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?w=800&q=80" alt="Marco Ferraro">
+        <img id="guidePhoto" src="https://images.unsplash.com/photo-1551632811-561732d1e306?w=800&q=80" alt="Marco Ferraro">
         <div class="guide-img-overlay"></div>
         <div class="guide-img-caption">
           <p>Marco Ferraro</p>
           <span>Guida Escursionistica Certificata CAI</span>
+        </div>
+        <!-- Overlay drag & drop visibile solo all'admin loggato -->
+        <div class="guide-img-change" id="guideImgChange"
+             onclick="document.getElementById('guideFileInput').click()"
+             ondragover="event.preventDefault();this.classList.add('dragover')"
+             ondragleave="this.classList.remove('dragover')"
+             ondrop="event.preventDefault();this.classList.remove('dragover');handleGuidePhoto(event.dataTransfer.files[0])">
+          <input type="file" id="guideFileInput" accept="image/*" style="display:none"
+                 onchange="handleGuidePhoto(this.files[0])">
+          <div class="guide-img-change-icon">📷</div>
+          <span>Cambia foto</span>
+          <small>Trascina o clicca</small>
         </div>
       </div>
       <div class="guide-badge">
@@ -1318,7 +1370,7 @@ input:focus, textarea:focus, select:focus {
   </div>
 </section>
 
-<!-- ==================== AGGIUNTO: MODAL LOGIN ==================== -->
+<!-- ==================== MODAL LOGIN ==================== -->
 <div class="modal-overlay" id="loginModal" onclick="outsideClose(event,'loginModal')">
   <div class="modal-box">
     <div class="modal-head">
@@ -1356,9 +1408,20 @@ input:focus, textarea:focus, select:focus {
       <label>Descrizione *</label>
       <textarea id="postContent" rows="4" placeholder="Descrivi l'escursione o l'articolo..."></textarea>
 
-      <label>URL immagine (opzionale)</label>
-      <input id="postImage" type="url" placeholder="https://..." oninput="previewImage(this.value)">
+      <label>Immagine (opzionale)</label>
+      <div class="drop-zone" id="postDropZone"
+           onclick="document.getElementById('postFileInput').click()"
+           ondragover="event.preventDefault();this.classList.add('dragover')"
+           ondragleave="this.classList.remove('dragover')"
+           ondrop="event.preventDefault();this.classList.remove('dragover');handlePostImage(event.dataTransfer.files[0])">
+        <input type="file" id="postFileInput" accept="image/*" style="display:none"
+               onchange="handlePostImage(this.files[0])">
+        <div class="drop-zone-icon">🖼</div>
+        <div class="drop-zone-text">Trascina un'immagine qui<br><small>oppure clicca per sceglierla dal computer</small></div>
+        <div class="drop-zone-uploading" id="postUploadStatus">⏳ Caricamento...</div>
+      </div>
       <div class="img-preview" id="imgPreview"><img id="imgPreviewEl" src="" alt=""></div>
+      <input type="hidden" id="postImage" value="">
 
       <div class="error-msg" id="adminError"></div>
       <button class="btn-submit" id="submitBtn" onclick="addPost()">Pubblica</button>
@@ -1425,18 +1488,71 @@ function toggleMobileMenu() {
   document.getElementById("mobileMenu").classList.toggle("open");
 }
 
-/* ---- ADMIN MODAL ---- */
-// ===== AGGIUNTO: gestione auth =====
+/* ---- AUTH ---- */
 let currentUser = null;
 
-// Ascolta i cambi di sessione (login/logout automatico)
 db.auth.onAuthStateChange((_event, session) => {
   currentUser = session ? session.user : null;
   document.getElementById("btnLogout").style.display = currentUser ? "inline-flex" : "none";
+  document.getElementById("guideImgChange").style.display = currentUser ? "flex" : "none";
 });
 
+/* ---- UPLOAD IMMAGINE SU SUPABASE STORAGE ---- */
+async function uploadImage(file, folder) {
+  const ext  = file.name.split('.').pop();
+  const path = `${folder}/${Date.now()}.${ext}`;
+  const { data, error } = await db.storage.from("images").upload(path, file, { upsert: true });
+  if (error) throw error;
+  const { data: urlData } = db.storage.from("images").getPublicUrl(data.path);
+  return urlData.publicUrl;
+}
+
+/* ---- GESTIONE IMMAGINE POST ---- */
+async function handlePostImage(file) {
+  if (!file) return;
+  const status  = document.getElementById("postUploadStatus");
+  const preview = document.getElementById("imgPreview");
+  const previewEl = document.getElementById("imgPreviewEl");
+  const btn     = document.getElementById("submitBtn");
+  status.style.display = "block";
+  btn.disabled = true;
+  try {
+    const url = await uploadImage(file, "posts");
+    document.getElementById("postImage").value = url;
+    previewEl.src = url;
+    preview.style.display = "block";
+    status.style.display = "none";
+    // Aggiorna il testo della drop zone per confermare
+    document.querySelector("#postDropZone .drop-zone-text").innerHTML =
+      `✅ <strong>${file.name}</strong><br><small>clicca per cambiare</small>`;
+  } catch (e) {
+    status.style.display = "none";
+    alert("Errore nel caricamento: " + e.message);
+  }
+  btn.disabled = false;
+}
+
+/* ---- GESTIONE FOTO GUIDA ---- */
+async function handleGuidePhoto(file) {
+  if (!file) return;
+  const overlay = document.getElementById("guideImgChange");
+  overlay.querySelector("span").textContent = "Caricamento...";
+  try {
+    const url = await uploadImage(file, "guide");
+    document.getElementById("guidePhoto").src = url;
+    localStorage.setItem("guidePhotoUrl", url);
+    overlay.querySelector("span").textContent = "Cambia foto";
+  } catch (e) {
+    overlay.querySelector("span").textContent = "Cambia foto";
+    alert("Errore nel caricamento: " + e.message);
+  }
+}
+
+// Carica foto guida personalizzata se salvata
+const savedGuidePhoto = localStorage.getItem("guidePhotoUrl");
+if (savedGuidePhoto) document.getElementById("guidePhoto").src = savedGuidePhoto;
+
 function openAdmin() {
-  // Se già loggato apre direttamente l'admin, altrimenti mostra il login
   if (currentUser) {
     document.getElementById("adminModal").classList.add("active");
   } else {
@@ -1459,7 +1575,7 @@ async function doLogin() {
   btn.disabled = true; btn.textContent = "Accesso...";
   const { error } = await db.auth.signInWithPassword({ email, password });
   btn.disabled = false; btn.textContent = "Accedi";
-  if (error) { errEl.textContent = "Credenziali non valide."; errEl.style.display = "block"; return; }
+  if (error) { errEl.textContent = error.message; errEl.style.display = "block"; return; }
   closeLogin();
   document.getElementById("adminModal").classList.add("active");
 }
@@ -1467,8 +1583,8 @@ async function doLogin() {
 async function doLogout() {
   await db.auth.signOut();
 }
-// ====================================
 
+/* ---- ADMIN MODAL ---- */
 function closeAdmin() { document.getElementById("adminModal").classList.remove("active"); }
 
 let currentType = "escursione";
@@ -1480,17 +1596,6 @@ function setType(type) {
   document.getElementById("btnBlog").classList.toggle("active", type === "blog");
 }
 
-function previewImage(url) {
-  const wrap = document.getElementById("imgPreview");
-  const img = document.getElementById("imgPreviewEl");
-  if (url && url.startsWith("http")) {
-    img.src = url;
-    wrap.style.display = "block";
-    img.onerror = () => { wrap.style.display = "none"; };
-  } else {
-    wrap.style.display = "none";
-  }
-}
 
 async function addPost() {
   const title   = document.getElementById("postTitle").value.trim();
@@ -1523,22 +1628,26 @@ async function addPost() {
     return;
   }
 
-  /* reset */
   document.getElementById("postTitle").value = "";
   document.getElementById("postContent").value = "";
   document.getElementById("postImage").value = "";
   document.getElementById("imgPreview").style.display = "none";
+  document.querySelector("#postDropZone .drop-zone-text").innerHTML =
+    "Trascina un'immagine qui<br><small>oppure clicca per sceglierla dal computer</small>";
   setType("escursione");
   closeAdmin();
   loadPosts();
 }
 
 /* ---- POST MODAL ---- */
-function openPost(post) {
+let allPosts = [];
+
+function openPost(index) {
+  const post = allPosts[index];
+
   document.getElementById("postModalTitle").textContent = post.title;
   document.getElementById("postModalText").textContent  = post.content;
 
-  /* data */
   const dateEl = document.getElementById("postModalDate");
   if (post.created_at) {
     const d = new Date(post.created_at).toLocaleDateString("it-IT", {
@@ -1550,14 +1659,12 @@ function openPost(post) {
     dateEl.style.display = "none";
   }
 
-  /* badge color */
   const badgeColor = post.type === "escursione"
     ? "background:var(--green-mid);color:white"
     : "background:var(--dark);color:white";
 
-  /* immagine */
-  const imgWrap = document.getElementById("postModalImgWrap");
-  const imgEl   = document.getElementById("postModalImg");
+  const imgWrap   = document.getElementById("postModalImgWrap");
+  const imgEl     = document.getElementById("postModalImg");
   const headPlain = document.getElementById("postModalHeadPlain");
 
   if (post.image_url) {
@@ -1570,8 +1677,7 @@ function openPost(post) {
   } else {
     imgWrap.style.display = "none";
     headPlain.style.display = "flex";
-    const typePlain = document.getElementById("postModalTypePlain");
-    typePlain.textContent = post.type;
+    document.getElementById("postModalTypePlain").textContent = post.type;
   }
 
   document.getElementById("postModal").classList.add("active");
@@ -1582,8 +1688,8 @@ function closePost() {
 }
 
 /* ---- CARD HTML ---- */
-function buildCard(post) {
-  const type = post.type;
+function buildCard(post, index) {
+  const type    = post.type;
   const excerpt = post.content.length > 100
     ? post.content.substring(0, 100) + "…"
     : post.content;
@@ -1594,14 +1700,14 @@ function buildCard(post) {
 
   const imgHtml = post.image_url
     ? `<div class="card-img">
-        <img src="${post.image_url}" alt="${post.title}" loading="lazy">
+        <img src="${post.image_url}" alt="" loading="lazy">
         <div class="card-img-overlay"></div>
         <span class="card-badge ${type}">${type}</span>
       </div>`
     : `<div class="card-placeholder ${type}">${type === "escursione" ? "⛰" : "✍"}</div>`;
 
   return `
-    <article class="card" onclick='openPost(${JSON.stringify(post)})'>
+    <article class="card" onclick="openPost(${index})">
       ${imgHtml}
       <div class="card-body">
         <h3 class="card-title">${post.title}</h3>
@@ -1627,15 +1733,17 @@ async function loadPosts() {
     return;
   }
 
+  allPosts = data;
+
   const escursioni = data.filter(p => p.type === "escursione");
   const blog       = data.filter(p => p.type === "blog");
 
   escWrap.innerHTML = escursioni.length
-    ? escursioni.map(buildCard).join("")
+    ? escursioni.map(p => buildCard(p, data.indexOf(p))).join("")
     : `<div class="empty-state"><div class="empty-icon">⛰</div><p>Nessuna escursione disponibile al momento</p></div>`;
 
   blogWrap.innerHTML = blog.length
-    ? blog.map(buildCard).join("")
+    ? blog.map(p => buildCard(p, data.indexOf(p))ap(buildCard).join("")
     : `<div class="empty-state"><div class="empty-icon">✍</div><p>Nessun articolo disponibile al momento</p></div>`;
 }
 
