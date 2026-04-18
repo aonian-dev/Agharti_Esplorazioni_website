@@ -1455,16 +1455,21 @@ input:focus, textarea:focus, select:focus {
 </div>
 
 <!-- ==================== SCRIPTS ==================== -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.js"></script>
 
 <script>
 
 /* ---- SUPABASE ---- */
-const { createClient } = supabase;
-const db = createClient(
-  "https://jhldmqdfdmuttyjsfkrj.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpobGRtcWRmZG11dHR5anNma3JqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNjkwNDEsImV4cCI6MjA5MTc0NTA0MX0.ElIti6eL75OQaJzshXusQemATbT8osysWREKGrv-Rs0"   // ← sostituisci con la tua anon key
-);
+let db = null;
+try {
+  const { createClient } = supabase;
+  db = createClient(
+    "https://jhldmqdfdmuttyjsfkrj.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpobGRtcWRmZG11dHR5anNma3JqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNjkwNDEsImV4cCI6MjA5MTc0NTA0MX0.ElIti6eL75OQaJzshXusQemATbT8osysWREKGrv-Rs0"   // ← sostituisci con la tua anon key
+  );
+} catch(e) {
+  console.error("Errore inizializzazione Supabase:", e);
+}
 
 /* ---- ANNO FOOTER ---- */
 document.getElementById("year").textContent = new Date().getFullYear();
@@ -1491,11 +1496,17 @@ function toggleMobileMenu() {
 /* ---- AUTH ---- */
 let currentUser = null;
 
-db.auth.onAuthStateChange((_event, session) => {
-  currentUser = session ? session.user : null;
-  document.getElementById("btnLogout").style.display = currentUser ? "inline-flex" : "none";
-  document.getElementById("guideImgChange").style.display = currentUser ? "flex" : "none";
-});
+if (db) {
+  db.auth.onAuthStateChange((_event, session) => {
+    try {
+      currentUser = session ? session.user : null;
+      const btnLogout = document.getElementById("btnLogout");
+      if (btnLogout) btnLogout.style.display = currentUser ? "inline-flex" : "none";
+      const guideOverlay = document.getElementById("guideImgChange");
+      if (guideOverlay) guideOverlay.style.display = currentUser ? "flex" : "none";
+    } catch(e) { console.warn("auth state error:", e); }
+  });
+}
 
 /* ---- UPLOAD IMMAGINE SU SUPABASE STORAGE ---- */
 async function uploadImage(file, folder) {
@@ -1549,8 +1560,11 @@ async function handleGuidePhoto(file) {
 }
 
 // Carica foto guida personalizzata se salvata
-const savedGuidePhoto = localStorage.getItem("guidePhotoUrl");
-if (savedGuidePhoto) document.getElementById("guidePhoto").src = savedGuidePhoto;
+try {
+  const savedGuidePhoto = localStorage.getItem("guidePhotoUrl");
+  const guidePhotoEl = document.getElementById("guidePhoto");
+  if (savedGuidePhoto && guidePhotoEl) guidePhotoEl.src = savedGuidePhoto;
+} catch(e) { console.warn("guide photo load error:", e); }
 
 function openAdmin() {
   if (currentUser) {
@@ -1743,12 +1757,13 @@ async function loadPosts() {
     : `<div class="empty-state"><div class="empty-icon">⛰</div><p>Nessuna escursione disponibile al momento</p></div>`;
 
   blogWrap.innerHTML = blog.length
-    ? blog.map(p => buildCard(p, data.indexOf(p))ap(buildCard).join("")
+    ? blog.map(p => buildCard(p, data.indexOf(p))).join("")
     : `<div class="empty-state"><div class="empty-icon">✍</div><p>Nessun articolo disponibile al momento</p></div>`;
 }
 
-loadPosts();
+if (db) loadPosts();
 
 </script>
 </body>
 </html>
+
