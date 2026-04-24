@@ -114,11 +114,11 @@ section { padding: 100px 60px; }
 .posts-wrap { max-width: 1100px; margin: 0 auto; }
 .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 28px; }
 
-.card { background: white; border-radius: var(--radius); overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.07); border: 1px solid rgba(0,0,0,0.05); transition: var(--transition); position: relative; display: flex; flex-direction: column; }
+.card { background: white; border-radius: var(--radius); overflow: hidden; min-height: 420px; box-shadow: 0 4px 20px rgba(0,0,0,0.07); border: 1px solid rgba(0,0,0,0.05); transition: var(--transition); position: relative; display: flex; flex-direction: column; }
 .card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(0,0,0,0.12); }
 
 /* CAROUSEL — Instagram-style */
-.card-carousel { position: relative; aspect-ratio: 1/1; overflow: hidden; background: #000; cursor: pointer; }
+.card-carousel { position: relative; aspect-ratio: 4/3; overflow: hidden; background: #000; cursor: pointer; }
 .carousel-track { display: flex; height: 100%; transition: transform 0.4s cubic-bezier(.22,.61,.36,1); will-change: transform; }
 .carousel-slide { flex: 0 0 100%; height: 100%; }
 .carousel-slide img { width: 100%; height: 100%; object-fit: cover; }
@@ -158,10 +158,10 @@ section { padding: 100px 60px; }
 .card-placeholder.escursione { background: rgba(63,122,86,0.1); }
 .card-placeholder.blog { background: rgba(30,42,35,0.07); }
 
-.card-body { padding: 18px 20px 20px; cursor: pointer; }
+.card-body { padding: 20px 20px 24px; cursor: pointer; }
 .card-title { font-family: var(--font-serif); font-size: 1.1rem; font-weight: 700; color: var(--dark); line-height: 1.3; margin-bottom: 8px; transition: color 0.2s; }
 .card:hover .card-title { color: var(--green-mid); }
-.card-excerpt { color: var(--gray); font-size: 0.88rem; line-height: 1.65; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.card-excerpt { color: var(--gray); font-size: 0.95rem; line-height: 1.7; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
 .card-date { color: #9ca3af; font-size: 0.78rem; display: flex; align-items: center; gap: 5px; }
 .card-read { color: var(--green-mid); font-size: 0.82rem; font-weight: 600; display: flex; align-items: center; gap: 4px; transition: gap 0.2s; }
