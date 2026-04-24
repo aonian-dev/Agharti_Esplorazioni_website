@@ -579,6 +579,20 @@ body.is-admin .btn-delete-post { display: inline-flex; }
   </div>
 </div>
 
+<div id="imageViewer" onclick="closeImageViewer()" style=" display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.9);
+  z-index:9999;
+  align-items:center;
+  justify-content:center; ">
+  <img id="viewerImg" style="
+    max-width:90%;
+    max-height:90%;
+    object-fit:contain;
+  " onclick="event.stopPropagation()">
+</div>
+
+  
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.js"></script>
 <script>
 /* ---- SUPABASE ---- */
@@ -836,7 +850,10 @@ document.getElementById("btnConfirmDelete").addEventListener("click", async () =
 
 /* ---- CAROUSEL (Instagram-style) ---- */
 function buildCarouselHTML(urls, uid) {
-  const slides = urls.map(u => `<div class="carousel-slide"><img src="${u}" alt="" loading="lazy" onclick="openImageViewer('${u}')"></div>`).join("");
+  const slides = urls.map(u =>
+  `<div class="carousel-slide">
+     <img src="${u}" alt="" loading="lazy"
+     onclick="event.stopPropagation(); openImageViewer(this.src)"></div>`).join("");
   const dots = urls.length > 1
     ? `<div class="carousel-dots">${urls.map((_,i) => `<div class="carousel-dot ${i===0?'active':''}"></div>`).join("")}</div>`
     : "";
@@ -1019,6 +1036,18 @@ function openImageViewer(src) {
 document.getElementById("imageViewer").addEventListener("click", () => {
   document.getElementById("imageViewer").style.display = "none";
 });
+
+function openImageViewer(src) {
+  const viewer = document.getElementById("imageViewer");
+  const img = document.getElementById("viewerImg");
+  img.src = src;
+  viewer.style.display = "flex";
+}
+
+function closeImageViewer() {
+  document.getElementById("imageViewer").style.display = "none";
+}
+
 
 
 
