@@ -7,7 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
 <style>
 :root {
   --green: #2d5a3d;
@@ -365,6 +366,34 @@ body.is-admin .btn-delete-post { display: inline-flex; }
   .btn-primary, .btn-outline { width: 100%; }
   .stats-grid { grid-template-columns: 1fr; }
 }
+
+.social-links {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+  transition: 0.3s ease;
+}
+
+.social-link i {
+  font-size: 24px;
+}
+
+.social-link:hover {
+  opacity: 0.7;
+  transform: translateX(3px);
+}
+
+  
 </style>
 </head>
 <body>
@@ -492,12 +521,26 @@ Ho fatto parte per un periodo di una ONG, Geographical Research, come esperto lo
       <div class="contact-items">
         <a class="contact-item" href="mailto:info@aspromonteguide.it">
           <div class="contact-icon">✉️</div>
-          <div><div class="contact-item-label">Email</div><div class="contact-item-value">info@aspromonteguide.it</div></div>
+          <div><div class="contact-item-label">Email</div><div class="contact-item-value">aghartiesplorazioni@gmail.com</div></div>
         </a>
         <a class="contact-item" href="tel:+393331234567">
           <div class="contact-icon">📞</div>
           <div><div class="contact-item-label">Telefono</div><div class="contact-item-value">+39 388 057 5198</div></div>
         </a>
+
+        <div class="social-links">
+
+  <a href="https://instagram.com/aghartiesplorazioni" target="_blank" class="social-link">
+    <i class="fa-brands fa-instagram"></i>
+    <span>Instagram</span>
+  </a>
+
+  <a href="https://facebook.com/AghartiEsplorazioni" target="_blank" class="social-link">
+    <i class="fa-brands fa-facebook"></i>
+    <span>Facebook</span>
+  </a>
+
+</div>
         <div class="contact-item">
           <div class="contact-icon">📍</div>
           <div><div class="contact-item-label">Zona operativa</div><div class="contact-item-value">Parchi dell'Aspromonte e delle Serre, Calabria. <br> con occasionali escursioni fuori regione</div></div>
@@ -511,13 +554,13 @@ Ho fatto parte per un periodo di una ONG, Geographical Research, come esperto lo
       <div class="contatti-img"><img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=85" alt=""></div>
       <div class="contatti-quote">
         <p>"L'Aspromonte non è solo un luogo, è un'emozione che si porta dentro."</p>
-        <span>— Marco, Guida</span>
+        <span>— Lorenzo, Guida</span>
       </div>
     </div>
   </div>
   <div class="footer">
-    <p>© <span id="year"></span> Aspromonte Guide — Tutti i diritti riservati</p>
-    <p>Guida escursionistica certificata CAI</p>
+    <p>© <span id="year"></span> Agharti Esplorazioni — Tutti i diritti riservati</p>
+    <p>Guida escursionistica certificata AIGAE</p>
   </div>
 </section>
 
