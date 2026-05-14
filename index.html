@@ -1043,10 +1043,6 @@ function openPost(index) {
     document.getElementById("postModalTypePlain").textContent = post.type;
   }
 
-  // Prev/next buttons
-  document.getElementById("btnPostPrev").disabled = index <= 0;
-  document.getElementById("btnPostNext").disabled = index >= allPosts.length - 1;
-
   // Scroll al top del contenuto
   const content = document.querySelector(".post-modal-content");
   if (content) content.scrollTop = 0;
