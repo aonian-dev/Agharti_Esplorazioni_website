@@ -1132,6 +1132,21 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
+  function() {
+  const logo = document.querySelector('.nav-logo');
+  if (!logo) return;
+  let timer = null;
+  logo.addEventListener('touchstart', function(e) {
+    timer = setTimeout(function() { openAdmin(); }, 6000);
+  }, { passive: true });
+  logo.addEventListener('touchend', function() { clearTimeout(timer); });
+  logo.addEventListener('touchmove', function() { clearTimeout(timer); });
+})();
+
+
+
+
+  
 
 let currentModalImages = [];
 let currentViewerIndex = 0;
