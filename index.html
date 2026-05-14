@@ -147,15 +147,15 @@ section { padding: 100px 60px; }
 .posts-wrap { max-width: 1200px; margin: 0 auto; }
 .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(480px, 1fr)); gap: 36px; }
 
-.card { background: white; border-radius: var(--radius); overflow: hidden; box-shadow: 0 8px 36px rgba(0,0,0,0.16); border: none; transition: var(--transition); position: relative; display: flex; flex-direction: row; }
+.card { background: white; border-radius: var(--radius); overflow: hidden; box-shadow: 0 8px 36px rgba(0,0,0,0.16); border: none; transition: var(--transition); position: relative; display: flex; flex-direction: column; }
 .card:hover { transform: translateY(-5px); box-shadow: 0 22px 56px rgba(0,0,0,0.24); }
 
 /* CAROUSEL — fills card proportionally, no black bars */
 .card-carousel {
   position: relative;
-  width: 38%;
+  width: 100%;
+  aspect-ratio: 16/9;
   flex-shrink: 0;
-  align-self: stretch;
   overflow: hidden;
   background: #cdddd5;
   cursor: pointer;
@@ -163,6 +163,7 @@ section { padding: 100px 60px; }
 .carousel-track { display: flex; width: 100%; height: 100%; transition: transform 0.4s cubic-bezier(.22,.61,.36,1); will-change: transform; }
 .carousel-slide { flex: 0 0 100%; min-width: 0; width: 100%; height: 100%; overflow: hidden; }
 .carousel-slide img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; pointer-events: none; }
+.post-modal-img .carousel-slide img { pointer-events: auto; cursor: zoom-in; }
 .carousel-arrow {
   position: absolute; top: 50%; transform: translateY(-50%);
   width: 32px; height: 32px; border-radius: 50%;
@@ -195,7 +196,7 @@ section { padding: 100px 60px; }
 .card-badge.escursione { background: var(--green-mid); color: white; }
 .card-badge.blog { background: var(--dark); color: white; }
 
-.card-placeholder { width: 38%; min-height: 160px; display: flex; align-items: center; justify-content: center; font-size: 3rem; cursor: pointer; flex-shrink: 0; align-self: stretch; }
+.card-placeholder { width: 100%; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; font-size: 3rem; cursor: pointer; flex-shrink: 0; }
 .card-placeholder.escursione { background: rgba(63,122,86,0.12); }
 .card-placeholder.blog { background: rgba(30,42,35,0.08); }
 
@@ -651,11 +652,7 @@ Ho fatto parte per un periodo di una ONG, Geographical Research, come esperto lo
       <p class="post-modal-text" id="postModalText"></p>
     </div>
     <div class="post-modal-footer">
-      <div class="post-modal-nav">
-        <button class="btn-nav" id="btnPostPrev" onclick="navigatePost(-1)">← Prec.</button>
-        <button class="btn-back" onclick="closePost()">Chiudi</button>
-        <button class="btn-nav" id="btnPostNext" onclick="navigatePost(1)">Succ. →</button>
-      </div>
+      <button class="btn-back" onclick="closePost()">← Torna indietro</button>
       <button class="btn-delete-post" id="btnDeleteFromModal">🗑 Elimina post</button>
     </div>
   </div>
@@ -676,16 +673,11 @@ Ho fatto parte per un periodo di una ONG, Geographical Research, come esperto lo
   </div>
 </div>
 
-<div id="imageViewer" onclick="closeImageViewer()" style=" display:none; position:fixed; inset:0;
-  background:rgba(0,0,0,0.9);
-  z-index:9999;
-  align-items:center;
-  justify-content:center; ">
-  <img id="viewerImg" style="
-    max-width:90%;
-    max-height:90%;
-    object-fit:contain;
-  " onclick="event.stopPropagation()">
+<div id="imageViewer" onclick="closeImageViewer()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:9999;align-items:center;justify-content:center;">
+  <img id="viewerImg" style="max-width:88%;max-height:88%;object-fit:contain;border-radius:6px;" onclick="event.stopPropagation()">
+  <button id="viewerPrev" onclick="event.stopPropagation();imageViewerNav(-1)" style="position:absolute;left:20px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);color:white;font-size:2.2rem;width:52px;height:52px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);transition:background .2s;">‹</button>
+  <button id="viewerNext" onclick="event.stopPropagation();imageViewerNav(1)"  style="position:absolute;right:20px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);color:white;font-size:2.2rem;width:52px;height:52px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);transition:background .2s;">›</button>
+  <button onclick="event.stopPropagation();closeImageViewer()" style="position:absolute;top:18px;right:18px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);color:white;font-size:1.1rem;width:38px;height:38px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);">✕</button>
 </div>
 
   
@@ -947,9 +939,9 @@ document.getElementById("btnConfirmDelete").addEventListener("click", async () =
 
 /* ---- CAROUSEL (Instagram-style) ---- */
 function buildCarouselHTML(urls, uid, viewable) {
-  const slides = urls.map(u =>
+  const slides = urls.map((u, i) =>
   `<div class="carousel-slide">
-     <img src="${u}" alt="" loading="lazy"${viewable ? ' onclick="event.stopPropagation();openImageViewer(this.src)"' : ''}></div>`).join("");
+     <img src="${u}" alt="" loading="lazy"${viewable ? ` onclick="event.stopPropagation();openImageViewerAt(${i})"` : ''}></div>`).join("");
   const dots = urls.length > 1
     ? `<div class="carousel-dots">${urls.map((_,i) => `<div class="carousel-dot ${i===0?'active':''}"></div>`).join("")}</div>`
     : "";
@@ -1034,6 +1026,7 @@ function openPost(index) {
   const carousel  = document.getElementById("postModalCarousel");
 
   const urls = getImageUrls(post);
+  currentModalImages = urls;
   if (urls.length) {
     const uid = "modal_" + Date.now();
     carousel.innerHTML = buildCarouselHTML(urls, uid, true);
@@ -1144,11 +1137,28 @@ document.addEventListener('keydown', function(e) {
 });
 
 
-function openImageViewer(src) {
-  const viewer = document.getElementById("imageViewer");
-  const img = document.getElementById("viewerImg");
-  img.src = src;
-  viewer.style.display = "flex";
+let currentModalImages = [];
+let currentViewerIndex = 0;
+
+function openImageViewerAt(index) {
+  if (!currentModalImages.length) return;
+  currentViewerIndex = index;
+  document.getElementById("viewerImg").src = currentModalImages[currentViewerIndex];
+  updateViewerNav();
+  document.getElementById("imageViewer").style.display = "flex";
+}
+function imageViewerNav(dir) {
+  const next = currentViewerIndex + dir;
+  if (next < 0 || next >= currentModalImages.length) return;
+  currentViewerIndex = next;
+  document.getElementById("viewerImg").src = currentModalImages[currentViewerIndex];
+  updateViewerNav();
+}
+function updateViewerNav() {
+  const prev = document.getElementById("viewerPrev");
+  const next = document.getElementById("viewerNext");
+  if (prev) prev.style.display = currentViewerIndex > 0 ? "flex" : "none";
+  if (next) next.style.display = currentViewerIndex < currentModalImages.length - 1 ? "flex" : "none";
 }
 function closeImageViewer() {
   document.getElementById("imageViewer").style.display = "none";
