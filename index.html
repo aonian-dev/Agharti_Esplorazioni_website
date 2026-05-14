@@ -1132,26 +1132,7 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-(function() {
-  const hero = document.getElementById('home');
-  if (!hero) return;
-  let tapCount = 0;
-  let tapTimer = null;
-  hero.addEventListener('click', function(e) {
-    if (e.target.closest('a, button')) return;
-    tapCount++;
-    clearTimeout(tapTimer);
-    if (tapCount >= 5) {
-      tapCount = 0;
-      openAdmin();
-    } else {
-      tapTimer = setTimeout(function() { tapCount = 0; }, 2000);
-    }
-  });
-})();
 
-
-  
 
 let currentModalImages = [];
 let currentViewerIndex = 0;
