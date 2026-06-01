@@ -2,7 +2,7 @@
 
 A responsive website for a professional hiking guide operating in the Aspromonte and Serre mountain regions of Calabria, Italy.
 
-The site serves as both a public showcase for the guide's hiking activities, and as a blog powered by Supabase.
+The site serves as a public showcase for the guide's hiking activities, and as a blog powered by Supabase.
 
 ## Features
 
