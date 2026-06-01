@@ -31,21 +31,21 @@ The site serves as a public showcase for the guide's hiking activities, and as a
 * Google Fonts
 
 ## Project Structure
-
+```text
 project-root/
 │
 ├── html/
-│   └── index.html      # Main application page
+│   └── index.html
 │
 ├── css/
-│   └── style.css       # Website styling
+│   └── style.css
 │
 ├── js/
-│   └── app.js          # Application logic
+│   └── app.js
 │
 ├── README_EN.md
 ├── README_IT.md
-
+```
 
 ## Supabase Setup
 
